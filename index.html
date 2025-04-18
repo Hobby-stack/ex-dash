@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Plateforme d'Impression</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .welcome-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .upload-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .dropzone:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .location-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        #map {
+            height: 200px;
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 15px;
+            background-color: #eee;
+        }
+        
+        .timeline-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+        
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-label {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .timeline-step.active .timeline-dot {
+            background-color: var(--primary-color);
+        }
+        
+        .timeline-step.active .timeline-label {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .history-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .footer {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        .footer a {
+            color: #adb5bd;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .file-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .pdf-icon {
+            color: #e74c3c;
+        }
+        
+        .image-icon {
+            color: #3498db;
+        }
+        
+        .doc-icon {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <h3>Print<span style="color: #2980b9;">Easy</span></h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home"></i> Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-list"></i> Mes commandes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-question-circle"></i> Aide</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> Jean Dupont
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <div class="container my-4">
+        <!-- Section Bienvenue -->
+        <div class="welcome-section">
+            <h2>Bienvenue Jean Dupont</h2>
+            <p class="lead text-muted">"Gérez vos impressions en toute simplicité."</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Section Envoi de fichier -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-cloud-upload-alt"></i> Envoi de fichier</h4>
+                    <div class="dropzone" id="dropzone">
+                        <i class="fas fa-file-upload fa-3x mb-3 text-muted"></i>
+                        <p>Glissez-déposez vos fichiers ici ou cliquez pour parcourir</p>
+                        <p class="text-muted small">Formats acceptés : PDF, DOCX, JPG, PNG</p>
+                        <input type="file" id="fileInput" style="display: none;" multiple>
+                        <button class="btn btn-outline-primary mt-2" onclick="document.getElementById('fileInput').click()">Parcourir les fichiers</button>
+                    </div>
+                    
+                    <h5 class="mt-4">Instructions d'impression</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Impression</label>
+                            <select class="form-select">
+                                <option>Recto</option>
+                                <option>Recto-Verso</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Couleur</label>
+                            <select class="form-select">
+                                <option>Noir & Blanc</option>
+                                <option>Couleur</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Agrafage</label>
+                            <select class="form-select">
+                                <option>Non</option>
+                                <option>Oui</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Format papier</label>
+                            <select class="form-select">
+                                <option>A4</option>
+                                <option>A3</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100">Envoyer la commande</button>
+                </div>
+
+                <!-- Section Historique des commandes -->
+                <div class="history-section mt-4">
+                    <h4><i class="fas fa-history"></i> Historique des commandes</h4>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Nom du fichier</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>12/04/2025</td>
+                                    <td>
+                                        <i class="fas fa-file-pdf pdf-icon file-icon"></i>
+                                        dossier_stage.pdf
+                                    </td>
+                                    <td><span class="badge bg-success">Livré</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">Voir détails</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>08/04/2025</td>
+                                    <td>
+                                        <i class="fas fa-file-image image-icon file-icon"></i>
+                                        affiche_event.png
+                                    </td>
+                                    <td><span class="badge bg-primary">Imprimé</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">Télécharger</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>01/04/2025</td>
+                                    <td>
+                                        <i class="fas fa-file-word doc-icon file-icon"></i>
+                                        contrat.docx
+                                    </td>
+                                    <td><span class="badge bg-warning text-dark">En attente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">Modifier</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Section Localisation pour livraison -->
+                <div class="location-section">
+                    <h4><i class="fas fa-map-marker-alt"></i> Localisation pour livraison</h4>
+                    <button class="btn btn-outline-primary w-100 mt-3">
+                        <i class="fas fa-location-arrow"></i> Autoriser la géolocalisation automatique
+                    </button>
+                    <p class="text-center text-muted my-2">ou</p>
+                    <div class="mb-3">
+                        <label class="form-label">Adresse de livraison</label>
+                        <input type="text" class="form-control" placeholder="Entrez votre adresse">
+                    </div>
+                    <div id="map"></div>
+                </div>
+
+                <!-- Section Suivi de commande -->
+                <div class="timeline-section mt-4">
+                    <h4><i class="fas fa-truck"></i> Suivi de la commande</h4>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">En attente</div>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">En cours</div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">Imprimé</div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-label">Livré</div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i> Votre commande #24567 est en cours d'impression. Livraison prévue le 15/04/2025.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="mb-2">
+                <a href="#">Mentions légales</a> | 
+                <a href="#">Politique de confidentialité</a> | 
+                <a href="#">Conditions d'utilisation</a>
+            </div>
+            <div>
+                <i class="fas fa-headset me-2"></i> Contact support : support@imprimerie.com | 01 23 45 67 89
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script pour la zone de dépôt de fichiers
+        const dropzone = document.getElementById('dropzone');
+        
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#3498db';
+            dropzone.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+        });
+        
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.borderColor = '#ccc';
+            dropzone.style.backgroundColor = 'white';
+        });
+        
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#ccc';
+            dropzone.style.backgroundColor = 'white';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                alert(`${files.length} fichier(s) prêt(s) à être uploadé(s)`);
+                // Ici, vous pourriez traiter les fichiers ou les afficher dans une liste
+            }
+        });
+        
+        // Simulation de carte (en production, utiliser une API comme Google Maps ou Leaflet)
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = document.getElementById('map');
+            map.innerHTML = '<div style="padding: 80px 20px; text-align: center; color: #666;"><i class="fas fa-map-marked-alt fa-3x mb-2"></i><p>Carte interactive</p></div>';
+            
+            // Gestion du clic sur la timeline
+            const timelineSteps = document.querySelectorAll('.timeline-step');
+            timelineSteps.forEach(step => {
+                step.addEventListener('click', function() {
+                    timelineSteps.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
